@@ -21,8 +21,7 @@ export async function POST({ request }) {
                 status: 200,
                 headers: {
                     // 'Set-Cookie': `token=${token}; Path=/; HttpOnly`
-                    'Set-Cookie': `adminToken=${token}; Path=/; HttpOnly; Secure; SameSite=Strict`,
-                    'Content-Type': 'application/json'
+                    'Set-Cookie': `adminToken=${token}; Path=/; HttpOnly;`,
                 }
             });
         } else {

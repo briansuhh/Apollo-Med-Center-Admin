@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 
 // lagay ko muna here, pero tatago ko to sa .env file
-const secretKey = 'Qh9pZG5y3pVfbH8QJnNjXVW3j8Iy3kPztT6xO1+9';
+// const secretKey = 'Qh9pZG5y3pVfbH8QJnNjXVW3j8Iy3kPztT6xO1+9';
+const secretKey = 'G7ogmcNg8HqKRK02w3/tSIxh/zOHYkAi/zIJ55k08fo=';
 const expiresIn = '1h';
 
 export function generateToken(user) {

@@ -3,7 +3,7 @@ import pool from '$lib/db';
 
 export async function GET({ request }) {
     const cookie = request.headers.get('cookie');
-    const token = cookie?.split('token=')[1];
+    const token = cookie?.split('adminToken=')[1];
     if (!token) {
         return new Response(JSON.stringify({ error: 'No token provided' }), { status: 401 });
     }

@@ -2,7 +2,7 @@ import { verifyToken } from "$lib/auth";
 import pool from "$lib/db";
 
 export async function GET({ request }) {
-    const token = request.headers.get('cookie')?.split('token=')[1];
+    const token = request.headers.get('cookie')?.split('adminToken=')[1];
     if (!token) {
         return new Response(JSON.stringify({ error: 'No token provided' }), { status: 401 });
     }
