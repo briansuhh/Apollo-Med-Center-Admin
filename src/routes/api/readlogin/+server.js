@@ -9,7 +9,6 @@ export async function GET({ request }) {
 
 
     try {
-        
         const decoded = verifyToken(token);
         const userId = decoded.user.id;
 

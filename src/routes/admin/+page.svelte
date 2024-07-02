@@ -1,6 +1,7 @@
 <script>
     import Sidebar from '../../components/Sidebar.svelte';
     import { pagename } from '../../store/page.js'; 
+    import Applicants from '../../components/Applicants.svelte';
 </script>
   
 <div class="mainbox">
@@ -8,10 +9,12 @@
         <Sidebar />
         {#if $pagename == "Dashboard"}
             <!-- <Dashboard /> -->
-        {:else if $pagename === "Application Form"}
+        {:else if $pagename === "New Applicant"}
             <!-- <ApplicationForm /> -->
-        {:else if $pagename === "Profile"}
-            <!-- <Profile />   -->
+        {:else if $pagename === "Applicants"}
+            <Applicants />
+        {:else if $pagename === "About Us"}
+            <!-- as -->
         {/if}
     </div>
 </div>
