@@ -17,10 +17,12 @@ export async function POST({ request }) {
         const user = rows[0];
         if (user && bcrypt.compareSync(password, user.password)) {
             const token = generateToken({ user });
-            return new Response(JSON.stringify({ message: 'Login successful' }, token ), {
+            return new Response(JSON.stringify({ message: 'Login successful' }), {
                 status: 200,
                 headers: {
-                'Set-Cookie': `token=${token}; Path=/; HttpOnly`
+                    // 'Set-Cookie': `token=${token}; Path=/; HttpOnly`
+                    'Set-Cookie': `adminToken=${token}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+                    'Content-Type': 'application/json'
                 }
             });
         } else {

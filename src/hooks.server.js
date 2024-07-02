@@ -6,7 +6,7 @@ const protectedRoutes = ['/admin'];
 
 export async function handle({ event, resolve }) {
   const cookies = parse(event.request.headers.get('cookie') || '');
-  const token = cookies.token;
+  const token = cookies.adminToken;
   const isProtectedRoute = protectedRoutes.some(route => event.url.pathname.startsWith(route));
 
   // to check if this shit is working
