@@ -7,7 +7,7 @@
   
     onMount(async () => {
       try {
-        const response = await fetch('/api/readapplicants', {
+        const response = await fetch('/api/readallapplicants', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -63,6 +63,14 @@
                         <th>Medical School Grad Year</th>
                         <th>Internship Institution</th>
                         <th>Internship Grad Year</th>
+                        <th>Residency Code</th>
+                        <th>Department Specialty</th>
+                        <th>Hospital</th>
+                        <th>Residency Duration</th>
+                        <th>Post-Residency Code</th>
+                        <th>Post-Residency Specialty</th>
+                        <th>Post-Residency Institution</th>
+                        <th>Post-Residency Duration</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,6 +102,14 @@
                             <td>{applicant.medSchoolGradYear}</td>
                             <td>{applicant.internshipInstitution}</td>
                             <td>{applicant.internshipGradYear}</td>
+                            <td>{applicant.residencyCode}</td>
+                            <td>{applicant.departmentSpecialty}</td>
+                            <td>{applicant.hospital}</td>
+                            <td>{applicant.residencyDuration}</td>
+                            <td>{applicant.postResCode}</td>
+                            <td>{applicant.postResSpecialty}</td>
+                            <td>{applicant.postResInstitution}</td>
+                            <td>{applicant.postResDuration}</td>
                         </tr>
                     {/each}
                 </tbody>

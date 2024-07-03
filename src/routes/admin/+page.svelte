@@ -1,7 +1,10 @@
 <script>
     import Sidebar from '../../components/Sidebar.svelte';
     import { pagename } from '../../store/page.js'; 
+    import Users from '../../components/Users.svelte';
     import Applicants from '../../components/Applicants.svelte';
+    import Residency from '../../components/Residency.svelte';
+    import PostResidency from '../../components/PostResidency.svelte';
 </script>
   
 <div class="mainbox">
@@ -9,10 +12,18 @@
         <Sidebar />
         {#if $pagename == "Dashboard"}
             <!-- <Dashboard /> -->
+        {:else if $pagename === "Users"}
+            <Users />
         {:else if $pagename === "New Applicant"}
             <!-- <ApplicationForm /> -->
         {:else if $pagename === "Applicants"}
             <Applicants />
+        {:else if $pagename === "Residency"}
+            <Residency />
+        {:else if $pagename === "Post Residency"}
+            <PostResidency />
+        {:else if $pagename === "Settings"}
+            <!-- <Settings /> -->
         {:else if $pagename === "About Us"}
             <!-- as -->
         {/if}
