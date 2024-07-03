@@ -2,31 +2,71 @@
     import Topbar from './Topbar.svelte';
     import { onMount } from 'svelte';
     import Notification from './Notification.svelte';
+    import ConfirmationMessage from '../components/ConfirmationMessage.svelte';
     import { showNotificationMessage } from '../store/notification.js';
+
     let postresidencies = [];
-  
+    let showConfirmation = false;
+    let postResidencyToDelete = null;
+
     onMount(async () => {
-      try {
-        const response = await fetch('/api/readpostres', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-  
-        if (response.ok) {
-            const result = await response.json();
-            postresidencies = result.data;
-            showNotificationMessage('success', 'Post-Residency loaded successfully!');
-        } else {
-            const result = await response.json();
+        try {
+            const response = await fetch('/api/readpostres', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                postresidencies = result.data;
+                showNotificationMessage('success', 'Post-Residency loaded successfully!');
+            } else {
+                const result = await response.json();
+                showNotificationMessage('error', 'Post-Residency table is empty.');
+            }
+        } catch (error) {
             showNotificationMessage('error', 'Error loading postresidencies. Please try again later.');
         }
-      } catch (error) {
-        showNotificationMessage('error', 'Error loading postresidencies. Please try again later.');
-      }
     });
+
+    function confirmDeletePostResidency(id) {
+        postResidencyToDelete = id;
+        showConfirmation = true;
+    }
+
+    async function deletePostResidency() {
+        if (!postResidencyToDelete) return;
+
+        try {
+            const response = await fetch(`/api/deletepostres/${postResidencyToDelete}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                postresidencies = postresidencies.filter(postresidency => postresidency.postResCode !== postResidencyToDelete);
+                showNotificationMessage('success', 'Post-Residency deleted successfully!');
+            } else {
+                showNotificationMessage('error', 'Error deleting post-residency. Please try again later.');
+            }
+        } catch (error) {
+            showNotificationMessage('error', 'Error deleting post-residency. Please try again later.');
+        } finally {
+            showConfirmation = false;
+            postResidencyToDelete = null;
+        }
+    }
+
+    function cancelDelete() {
+        showConfirmation = false;
+        postResidencyToDelete = null;
+    }
 </script>
+
 
 <main class="main-content">
     <Topbar />
@@ -37,6 +77,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Actions</th>
                         <th>Applicant ID</th>
                         <th>Post-Residency Code</th>
                         <th>Post-Residency Specialty</th>
@@ -47,6 +88,10 @@
                 <tbody>
                     {#each postresidencies as postresidency}
                         <tr>
+                            <td>
+                                <button on:click={() => editPostResidency(postresidency.postResCode)}>Edit</button>
+                                <button on:click={() => confirmDeletePostResidency(postresidency.postResCode)}>Delete</button>
+                            </td>
                             <td>{postresidency.applicantID}</td>
                             <td>{postresidency.postResCode}</td>
                             <td>{postresidency.postResSpecialty}</td>
@@ -61,6 +106,12 @@
 </main>
 
 <Notification />
+<ConfirmationMessage
+    show={showConfirmation}
+    message="Are you sure you want to delete this post-residency?"
+    on:confirm={deletePostResidency}
+    on:cancel={cancelDelete}
+/>
 
 <style>
     .main-content {

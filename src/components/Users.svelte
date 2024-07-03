@@ -2,30 +2,69 @@
     import Topbar from './Topbar.svelte';
     import { onMount } from 'svelte';
     import Notification from './Notification.svelte';
+    import ConfirmationMessage from '../components/ConfirmationMessage.svelte';
     import { showNotificationMessage } from '../store/notification.js';
+
     let users = [];
-  
+    let showConfirmation = false;
+    let userToDelete = null;
+
     onMount(async () => {
-      try {
-        const response = await fetch('/api/readusers', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-  
-        if (response.ok) {
-            const result = await response.json();
-            users = result.data;
-            showNotificationMessage('success', 'Users loaded successfully!');
-        } else {
-            const result = await response.json();
+        try {
+            const response = await fetch('/api/readusers', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                users = result.data;
+                showNotificationMessage('success', 'Users loaded successfully!');
+            } else {
+                const result = await response.json();
+                showNotificationMessage('error', 'Users table is empty.');
+            }
+        } catch (error) {
             showNotificationMessage('error', 'Error loading users. Please try again later.');
         }
-      } catch (error) {
-        showNotificationMessage('error', 'Error loading users. Please try again later.');
-      }
     });
+
+    function confirmDeleteUser(id) {
+        userToDelete = id;
+        showConfirmation = true;
+    }
+
+    async function deleteUser() {
+        if (!userToDelete) return;
+
+        try {
+            const response = await fetch(`/api/deleteuser/${userToDelete}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                users = users.filter(user => user.id !== userToDelete);
+                showNotificationMessage('success', 'User deleted successfully!');
+            } else {
+                showNotificationMessage('error', 'Error deleting user. Please try again later.');
+            }
+        } catch (error) {
+            showNotificationMessage('error', 'Error deleting user. Please try again later.');
+        } finally {
+            showConfirmation = false;
+            userToDelete = null;
+        }
+    }
+
+    function cancelDelete() {
+        showConfirmation = false;
+        userToDelete = null;
+    }
 </script>
 
 <main class="main-content">
@@ -37,6 +76,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Actions</th>
                         <th>User ID</th>
                         <th>Full Name</th>
                         <th>Email</th>
@@ -47,6 +87,10 @@
                 <tbody>
                     {#each users as user}
                         <tr>
+                            <td>
+                                <button on:click={() => editUser(user.id)}>Edit</button>
+                                <button on:click={() => confirmDeleteUser(user.id)}>Delete</button>
+                            </td>
                             <td>{user.id}</td>
                             <td>{user.name}</td>
                             <td>{user.email}</td>
@@ -61,6 +105,13 @@
 </main>
 
 <Notification />
+<ConfirmationMessage
+        show={showConfirmation}
+        message="Are you sure you want to delete this applicant?"
+        on:confirm={deleteUser}
+        on:cancel={cancelDelete}
+    />
+
 
 <style>
     .main-content {

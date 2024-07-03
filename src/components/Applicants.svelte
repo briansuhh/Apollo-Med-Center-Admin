@@ -3,8 +3,12 @@
     import { onMount } from 'svelte';
     import Notification from './Notification.svelte';
     import { showNotificationMessage } from '../store/notification.js';
+    import ConfirmationMessage from '../components/ConfirmationMessage.svelte';
+
     let applicants = [];
-  
+    let showConfirmation = false;
+    let applicantToDelete = null;
+
     onMount(async () => {
       try {
         const response = await fetch('/api/readapplicants', {
@@ -13,7 +17,7 @@
             'Content-Type': 'application/json',
           },
         });
-  
+
         if (response.ok) {
             const result = await response.json();
             applicants = result.data;
@@ -26,6 +30,42 @@
         showNotificationMessage('error', 'Error loading applicants. Please try again later.');
       }
     });
+
+    function confirmDeleteApplicant(id) {
+      applicantToDelete = id;
+      showConfirmation = true;
+    }
+
+    async function deleteApplicant() {
+      if (!applicantToDelete) return;
+
+      try {
+        const response = await fetch(`/api/deleteapplicant/${applicantToDelete}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          // Remove the deleted applicant from the list
+          applicants = applicants.filter(applicant => applicant.applicantID !== applicantToDelete);
+          showNotificationMessage('success', 'Applicant deleted successfully!');
+        } else {
+          showNotificationMessage('error', 'Error deleting applicant. Please try again later.');
+        }
+      } catch (error) {
+        showNotificationMessage('error', 'Error deleting applicant. Please try again later.');
+      } finally {
+        showConfirmation = false;
+        applicantToDelete = null;
+      }
+    }
+
+    function cancelDelete() {
+      showConfirmation = false;
+      applicantToDelete = null;
+    }
 </script>
 
 <main class="main-content">
@@ -37,6 +77,8 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Actions</th>
+                        <th>User ID</th>
                         <th>Applicant ID</th>
                         <th>Full Name</th>
                         <th>Age</th>
@@ -68,6 +110,11 @@
                 <tbody>
                     {#each applicants as applicant}
                         <tr>
+                            <td>
+                                <button on:click={() => editApplicant(applicant.applicantID)}>Edit</button>
+                                <button on:click={() => confirmDeleteApplicant(applicant.applicantID)}>Delete</button>
+                            </td>
+                            <td>{applicant.userID}</td>
                             <td>{applicant.applicantID}</td>
                             <td>{applicant.fullName}</td>
                             <td>{applicant.age}</td>
@@ -103,6 +150,12 @@
 </main>
 
 <Notification />
+<ConfirmationMessage
+    show={showConfirmation}
+    message="Are you sure you want to delete this applicant?"
+    on:confirm={deleteApplicant}
+    on:cancel={cancelDelete}
+/>
 
 <style>
     .main-content {
