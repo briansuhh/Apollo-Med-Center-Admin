@@ -1,12 +1,13 @@
 <script>
     import Topbar from './Topbar.svelte';
     import { onMount } from 'svelte';
+    import Notification from '../components/Notification.svelte';
     import { showNotificationMessage } from '../store/notification.js';
     let applicants = [];
   
     onMount(async () => {
       try {
-        const response = await fetch('/api/readapplicants', {
+        const response = await fetch('/api/readallapplicants', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -116,6 +117,8 @@
         </div>
     </div>
 </main>
+
+<Notification />
 
 <style>
     .main-content {
