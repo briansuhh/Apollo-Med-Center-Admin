@@ -20,7 +20,6 @@ export async function POST({ request }) {
             return new Response(JSON.stringify({ message: 'Login successful' }), {
                 status: 200,
                 headers: {
-                    // 'Set-Cookie': `token=${token}; Path=/; HttpOnly`
                     'Set-Cookie': `adminToken=${token}; Path=/; HttpOnly;`,
                 }
             });
