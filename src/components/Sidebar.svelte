@@ -12,6 +12,11 @@
     console.log('New Applicant');
   }
 
+  function showEditApplicantRecord() {
+    pagename.set('Edit Applicant');
+    console.log('Edit Applicant');
+  }
+
   function showUsers() {
     pagename.set('Users');
     console.log('Users');
@@ -74,6 +79,10 @@
       <button class="nav-button {$pagename === 'New Applicant' ? 'active' : ''}" on:click={showNewApplicantRecord}>
           <i class="fa-solid fa-file icon"></i>New Applicant
       </button>
+
+      <button class="nav-button {$pagename === 'Edit Applicant' ? 'active' : ''}" on:click={showEditApplicantRecord}>
+        <i class="fa-solid fa-file icon"></i>Edit Applicant
+    </button>
 
       <span class="separator">Table</span>
 

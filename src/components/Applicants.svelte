@@ -111,7 +111,6 @@
                     {#each applicants as applicant}
                         <tr>
                             <td>
-                                <button on:click={() => editApplicant(applicant.applicantID)}>Edit</button>
                                 <button on:click={() => confirmDeleteApplicant(applicant.applicantID)}>Delete</button>
                             </td>
                             <td>{applicant.userID}</td>
