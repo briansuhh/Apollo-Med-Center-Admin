@@ -89,8 +89,7 @@
                     {#each postresidencies as postresidency}
                         <tr>
                             <td>
-                                <button on:click={() => editPostResidency(postresidency.postResCode)}>Edit</button>
-                                <button on:click={() => confirmDeletePostResidency(postresidency.postResCode)}>Delete</button>
+                                <button class="delButton" on:click={() => confirmDeletePostResidency(postresidency.postResCode)}><i class="fa-solid fa-trash"></i></button>
                             </td>
                             <td>{postresidency.applicantID}</td>
                             <td>{postresidency.postResCode}</td>
@@ -145,16 +144,24 @@
 
     th, td {
         padding: 8px;
-        border: 1px solid #ccc;
         white-space: nowrap; 
     }
 
     th {
-        background-color: #d2edef;
+        background-color: #d5dae9;
         font-weight: 600;
     }
     td {
         font-size: 14px;
         font-weight: 400;
+    }
+    .delButton {
+        padding-left: 10px;
+        padding-right: 10px;
+        border: none;
+    }
+
+    .delButton i {
+        font-size: 15px;
     }
 </style>

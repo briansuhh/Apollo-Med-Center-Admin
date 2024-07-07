@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation';
   import Notification from '../components/Notification.svelte';
   import { showNotificationMessage } from '../store/notification.js';
+  import { pagename } from '../store/page.js';
 
   let email = '';
   let password = '';
@@ -18,6 +19,7 @@
         const data = await response.json();
         localStorage.setItem('token', data.token);
         showNotificationMessage('success', 'Login successful!');
+        pagename.set('Dashboard');
         setTimeout(() => goto('/admin'), 1000); 
       } else {
         showNotificationMessage('error', 'Login failed. Please check your credentials.');

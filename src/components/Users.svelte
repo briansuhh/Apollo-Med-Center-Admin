@@ -88,8 +88,7 @@
                     {#each users as user}
                         <tr>
                             <td>
-                                <button on:click={() => editUser(user.id)}>Edit</button>
-                                <button on:click={() => confirmDeleteUser(user.id)}>Delete</button>
+                                <button class="delButton" on:click={() => confirmDeleteUser(user.id)}><i class="fa-solid fa-trash"></i></button>
                             </td>
                             <td>{user.id}</td>
                             <td>{user.name}</td>
@@ -145,16 +144,25 @@
 
     th, td {
         padding: 8px;
-        border: 1px solid #ccc;
         white-space: nowrap; 
     }
 
     th {
-        background-color: #d2edef;
+        background-color: #d5dae9;
         font-weight: 600;
     }
     td {
         font-size: 14px;
         font-weight: 400;
+    }
+
+    .delButton {
+        padding-left: 10px;
+        padding-right: 10px;
+        border: none;
+    }
+
+    .delButton i {
+        font-size: 15px;
     }
 </style>

@@ -32,11 +32,6 @@
     console.log('Post Residency');
   }
 
-  function showSettings() {
-    pagename.set('Settings');
-    console.log('Settings');
-  }
-
   async function logout() {
     try {
       const response = await fetch('/api/logout', {
@@ -65,7 +60,7 @@
       <h1>Apollo Medical Center</h1>
   </div>
   <nav class="navigation">
-      <span class="separator">General</span>
+      <span class="separator">GENERAL</span>
 
       <button class="nav-button {$pagename === 'Dashboard' ? 'active' : ''}" on:click={showDashboard}>
           <i class="fa-solid fa-house icon"></i>Dashboard
@@ -75,7 +70,7 @@
         <i class="fa-solid fa-file icon"></i>Application Form
     </button>
 
-      <span class="separator">Table</span>
+      <span class="separator">TABLE</span>
 
       <button class="nav-button {$pagename === 'Users' ? 'active' : ''}" on:click={showUsers}>
           <i class="fa-solid fa-users icon"></i>Users
@@ -93,11 +88,7 @@
           <i class="fa-solid fa-building icon"></i>Post Residency
       </button>
 
-      <span class="separator">Support</span>
-
-      <button class="nav-button" on:click={showSettings}>
-          <i class="fa-solid fa-cog icon"></i>Settings
-      </button>
+      <span class="separator">ACCOUNT</span>
 
       <button class="nav-button" on:click={logout}>
           <i class="fa-solid fa-right-from-bracket icon"></i>Logout

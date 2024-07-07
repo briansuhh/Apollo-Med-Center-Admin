@@ -13,7 +13,7 @@ export async function GET({ request }) {
         verifyToken(token);
         const connection = await pool.getConnection();
         const [rows] = await connection.execute(`
-            SELECT * FROM postresidency`
+            SELECT * FROM postresidency ORDER BY applicantID`
         );
         connection.release();
 

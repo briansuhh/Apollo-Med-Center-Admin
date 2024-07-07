@@ -46,10 +46,197 @@
         user_id: ''
     };
 
-    let list = [
+    let citizenship_list = [
+        'Afghan',
+        'Albanian',
+        'Algerian',
+        'American',
+        'Andorran',
+        'Angolan',
+        'Antiguan',
+        'Argentine',
+        'Armenian',
+        'Australian',
+        'Austrian',
+        'Azerbaijani',
+        'Bahamian',
+        'Bahraini',
+        'Bangladeshi',
+        'Barbadian',
+        'Belarusian',
+        'Belgian',
+        'Belizean',
+        'Beninese',
+        'Bhutanese',
+        'Bolivian',
+        'Bosnian',
+        'Botswanan',
+        'Brazilian',
+        'Bruneian',
+        'Bulgarian',
+        'Burkinabe',
+        'Burundian',
+        'Cambodian',
+        'Cameroonian',
+        'Canadian',
+        'Cape Verdean',
+        'Central African',
+        'Chadian',
+        'Chilean',
+        'Chinese',
+        'Colombian',
+        'Comoran',
+        'Congolese',
+        'Costa Rican',
+        'Croatian',
+        'Cuban',
+        'Cypriot',
+        'Czech',
+        'Danish',
+        'Djiboutian',
+        'Dominican',
+        'Dutch',
+        'East Timorese',
+        'Ecuadorian',
+        'Egyptian',
+        'Emirati',
+        'English',
+        'Equatoguinean',
+        'Eritrean',
+        'Estonian',
+        'Ethiopian',
+        'Fijian',
         'Filipino',
-        'American'
-    ]
+        'Finnish',
+        'French',
+        'Gabonese',
+        'Gambian',
+        'Georgian',
+        'German',
+        'Ghanaian',
+        'Greek',
+        'Grenadian',
+        'Guatemalan',
+        'Guinean',
+        'Guyanese',
+        'Haitian',
+        'Honduran',
+        'Hungarian',
+        'Icelander',
+        'Indian',
+        'Indonesian',
+        'Iranian',
+        'Iraqi',
+        'Irish',
+        'Israeli',
+        'Italian',
+        'Ivorian',
+        'Jamaican',
+        'Japanese',
+        'Jordanian',
+        'Kazakhstani',
+        'Kenyan',
+        'Kittitian',
+        'Kosovar',
+        'Kuwaiti',
+        'Kyrgyzstani',
+        'Laotian',
+        'Latvian',
+        'Lebanese',
+        'Liberian',
+        'Libyan',
+        'Liechtensteiner',
+        'Lithuanian',
+        'Luxembourger',
+        'Malagasy',
+        'Malawian',
+        'Malaysian',
+        'Maldivian',
+        'Malian',
+        'Maltese',
+        'Marshallese',
+        'Mauritanian',
+        'Mauritian',
+        'Mexican',
+        'Micronesian',
+        'Moldovan',
+        'Monegasque',
+        'Mongolian',
+        'Montenegrin',
+        'Moroccan',
+        'Mozambican',
+        'Namibian',
+        'Nauruan',
+        'Nepali',
+        'New Zealander',
+        'Nicaraguan',
+        'Nigerien',
+        'Nigerian',
+        'Ni-Vanuatu',
+        'North Korean',
+        'North Macedonian',
+        'Norwegian',
+        'Omani',
+        'Pakistani',
+        'Palauan',
+        'Palestinian',
+        'Panamanian',
+        'Papua New Guinean',
+        'Paraguayan',
+        'Peruvian',
+        'Polish',
+        'Portuguese',
+        'Qatari',
+        'Rwandan',
+        'Saint Lucian',
+        'Salvadoran',
+        'Samoan',
+        'Sammarinese',
+        'Saudi',
+        'Scottish',
+        'Senegalese',
+        'Serbian',
+        'Seychellois',
+        'Sierra Leonean',
+        'Singaporean',
+        'Slovak',
+        'Slovenian',
+        'Solomon Islander',
+        'Somali',
+        'South African',
+        'South Korean',
+        'South Sudanese',
+        'Spanish',
+        'Sri Lankan',
+        'Sudanese',
+        'Surinamese',
+        'Swazi',
+        'Swedish',
+        'Swiss',
+        'Syrian',
+        'Taiwanese',
+        'Tajikistani',
+        'Tanzanian',
+        'Thai',
+        'Togolese',
+        'Tongan',
+        'Trinidadian',
+        'Tunisian',
+        'Turkish',
+        'Turkmen',
+        'Tuvaluan',
+        'Ugandan',
+        'Ukrainian',
+        'Uruguayan',
+        'Uzbekistani',
+        'Vatican',
+        'Venezuelan',
+        'Vietnamese',
+        'Welsh',
+        'Yemeni',
+        'Zambian',
+        'Zimbabwean',
+    ];
 
     // let applicant.user_id;
     let nextId = 0; 
@@ -346,12 +533,12 @@
     <Topbar />
 
     <!-- the input of this should be put on the variable applicant.user_id on the script-->
-    <label for="">USER ID:</label>
-    <input type="text" bind:value="{applicant.user_id}" placeholder="Enter User ID" />
-
-    <button type="button" class="find-button" on:click="{findApplicant}">Find</button>
-
-    <br><br>
+     <div class="input-user-id">
+         <label class="label-user" for="">USER ID:</label>
+         <input type="text" bind:value="{applicant.user_id}" class="user-input" placeholder="Enter User ID" />
+         <button type="button" class="find-button" on:click="{findApplicant}">Find</button>
+     </div>
+     
     <!-- Form Navigator -->
     <div class="sectNav">
     
@@ -406,7 +593,7 @@
                         <label for="citizenship">Citizenship</label>
                         <select bind:value={applicant.citizenship}>
                             <option value="" disabled selected>Select your citizenship</option>
-                            {#each list as item}
+                            {#each citizenship_list as item}
                                 <option value={item}>{item}</option>
                             {/each}
                         </select>
@@ -421,17 +608,24 @@
                     </div>
                     <div class="form-group">
                         <label for="insuranceIDType">Insurance ID Type</label>
-                        <input type="text" id="insuranceIDType" bind:value={applicant.insuranceIDType}>
+                        <!-- <input type="text" id="insuranceIDType" bind:value={applicant.insuranceIDType}> -->
+                        
+                        <select bind:value={applicant.insuranceIDType}>
+                            <option value="" disabled selected>Select your insurance ID type</option>
+                                <option value="GSIS">GSIS</option>
+                                <option value="SSS">SSS</option>
+                        </select>
+
                         <label for="email">Email Address</label>
                         <input type="email" id="email" bind:value={applicant.emailAddress}>
                         <label for="tinNo">TIN No.</label>
                         <input type="text" id="tinNo" bind:value={applicant.tinNo}>
                     </div>
                     <div class="form-group">
-                        <label for="phicNo">Phic No.</label>
-                        <input type="text" id="phicNo" bind:value={applicant.phicNo}>
                         <label for="insuranceIDNo">Insurance ID No.</label>
                         <input type="text" id="insuranceIDNo" bind:value={applicant.insuranceIDNo}>
+                        <label for="phicNo">Phic No.</label>
+                        <input type="text" id="phicNo" bind:value={applicant.phicNo}>
                     </div>
                     <div class="form-group">
                         <label for="guardianName">Guardian Name</label>
@@ -742,5 +936,43 @@
 
     .delButton i {
         font-size: 15px;
+    }
+
+    .find-button {
+        background-color: #6e7ba2;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 100px;
+    }
+
+    .user-input {
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 150px;
+    }
+
+    .label-user {
+        margin-left: 45px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+    }
+
+    .input-user-id {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
     }
 </style>

@@ -5,6 +5,7 @@ import { parse } from 'cookie';
 export async function GET({ request }) {
     const cookies = parse(request.headers.get('cookie') || '');
     const token = cookies.adminToken;
+    
     if (!token) {
         return new Response(JSON.stringify({ error: 'No token provided' }), { status: 401 });
     }
@@ -13,7 +14,7 @@ export async function GET({ request }) {
         verifyToken(token);
         const connection = await pool.getConnection();
         const [rows] = await connection.execute(`
-            SELECT * FROM residency`
+            SELECT * FROM residency ORDER BY applicantID`
         );
         connection.release();
 
