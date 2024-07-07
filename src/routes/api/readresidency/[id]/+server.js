@@ -6,7 +6,7 @@ export async function GET({ params }) {
     try {
         const connection = await pool.getConnection();
         const [rows] = await connection.execute(
-            'SELECT * FROM residency WHERE applicantID = ?',
+            'SELECT * FROM residency WHERE applicantID = (SELECT applicantID FROM applicant WHERE userID = ?)',
             [id]
         );
         connection.release();

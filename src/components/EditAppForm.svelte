@@ -42,7 +42,8 @@
         postResInstitution: '',
         postResDuration: '',
         departmentSpecialties: [],
-        postDepartmentSpecialties: []
+        postDepartmentSpecialties: [],
+        user_id: ''
     };
 
     let list = [
@@ -50,9 +51,9 @@
         'American'
     ]
 
-    function getButtonClass(sectionName) {
-        return currentSection === sectionName ? 'buttonActive' : 'buttonDefault';
-    }
+    // let applicant.user_id;
+    let nextId = 0; 
+    let postNextId = 0;
 
     function showSect1() {
       currentSection.set('Section1');
@@ -98,15 +99,15 @@
       }
     }
 
-    let appID = '2024-CMC-1';
-
     onMount(async () => {
         await fetchData(); // Initial data fetch on component mount
+        await fetchResidencyData();
+        await fetchPostResidencyData();
     });
 
     async function fetchData() {
         try {
-            const response = await fetch(`/api/readapplicants/${appID}`, {
+            const response = await fetch(`/api/readapplicants/${applicant.user_id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -141,6 +142,13 @@
             applicant.guardianName = data.user.guardianName;
             applicant.guardianOccupation = data.user.guardianOccupation;
             applicant.guardianContactNo = data.user.guardianContactNo;
+            applicant.collegeAttended = data.user.collegeAttended;
+            applicant.degree = data.user.degree;
+            applicant.yearGraduated = data.user.yearGraduated;
+            applicant.medSchoolAttended = data.user.medSchoolAttended;
+            applicant.medSchoolGradYear = data.user.medSchoolGradYear;
+            applicant.internshipInstitution = data.user.internshipInstitution;
+            applicant.internshipGradYear = data.user.internshipGradYear;
 
             showNotificationMessage('success', 'Saved data loaded successfully');
         } catch (error) {
@@ -162,36 +170,13 @@
     // Update the full name when first name, middle name, or last name changes
     $: applicant.fullName = `${applicant.firstName} ${applicant.middleName} ${applicant.lastName}`.trim();
 
-
-    onMount(async () => {
-        const response = await fetch(`/api/readapplicants/${appID}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            applicant.collegeAttended = data.user.collegeAttended;
-            applicant.degree = data.user.degree;
-            applicant.yearGraduated = data.user.yearGraduated;
-            applicant.medSchoolAttended = data.user.medSchoolAttended;
-            applicant.medSchoolGradYear = data.user.medSchoolGradYear;
-            applicant.internshipInstitution = data.user.internshipInstitution;
-            applicant.internshipGradYear = data.user.internshipGradYear;
-            showNotificationMessage('success', 'Saved data is loaded successfully');
-        } else {
-            showNotificationMessage('error', 'You do not have any saved data. Please fill up the form.');
-        }
-    });
-
     async function findApplicant() {
-        await fetchData(); // Fetch data with updated appID
+        await fetchData(); // Fetch data with updated applicant.user_id
+        await fetchResidencyData();
+        await fetchPostResidencyData();
     }
 
-    let nextId = 0; 
+  
 
     const addDepartmentSpecialty = () => {
         applicant.departmentSpecialties = [
@@ -200,15 +185,9 @@
         ];
     };
 
-    
-
-    onMount(async () => {
-        await fetchResidencyData();
-    });
-
     async function fetchResidencyData() {
         try {
-            const response = await fetch(`/api/readresidency/${appID}`, {
+            const response = await fetch(`/api/readresidency/${applicant.user_id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -234,9 +213,6 @@
         }
     }
 
-
-    let postNextId = 0;
-
     const addPostDepartmentSpecialty = () => {
         applicant.postDepartmentSpecialties = [
             ...applicant.postDepartmentSpecialties,
@@ -244,11 +220,8 @@
         ];
     };
 
-
-
-    onMount(async () => {
-
-        const response = await fetch(`/api/readpostres/${appID}`, {
+    async function fetchPostResidencyData() {
+        const response = await fetch(`/api/readpostres/${applicant.user_id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -269,127 +242,118 @@
         } else {
             showNotificationMessage('error', 'You do not have any saved data. Please fill up the form.');
         }
-    });
+    }
 
     async function registerApplicant() {
+        try {
+            const response = await fetch('/api/submitappinfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(applicant)
+            });
 
-
-
-try {
-    const response = await fetch('/api/submitappinfo', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(applicant)
-    });
-
-    if (response.ok) {
-        const result = await response.json();
-        alert('Application form registration successful, your response will be reviewed by our staff');
-        showConfirmation3 = false;
-        // goto('/applicationform'); 
-    } else {
-        const error = await response.json();
-        alert(`Application form registration failed: ${error.message}`);
+            if (response.ok) {
+                const result = await response.json();
+                alert('Application form registration successful, your response will be reviewed by our staff');
+                showConfirmation3 = false;
+            } else {
+                const error = await response.json();
+                alert(`Application form registration failed: ${error.message}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred during registration');
+        }
     }
-} catch (error) {
-    console.error('Error:', error);
-    alert('An error occurred during registration');
-}
-}
 
-   //confirmation of delete code heree =====
-  // State variables
-let showConfirmation = false;
-let specialtyToDeleteIndex = null;
-let showConfirmation2 = false;
-let specialtyToDeleteIndex2 = null;
+    //confirmation of delete code heree =====
+    // State variables
+    let showConfirmation = false;
+    let specialtyToDeleteIndex = null;
+    let showConfirmation2 = false;
+    let specialtyToDeleteIndex2 = null;
 
-// Function to confirm deletion
-function confirmDeleteApplicant(index) {
-  specialtyToDeleteIndex = index;
-  showConfirmation = true;
-}
+    // Function to confirm deletion
+    function confirmDeleteApplicant(index) {
+        specialtyToDeleteIndex = index;
+        showConfirmation = true;
+    }
 
 
-function deleteDepartmentSpecialty(index) {
-        applicant.departmentSpecialties = applicant.departmentSpecialties.filter((_, i) => i !== index);
-    };
+    function deleteDepartmentSpecialty(index) {
+            applicant.departmentSpecialties = applicant.departmentSpecialties.filter((_, i) => i !== index);
+        };
 
-// Function to delete the applicant with confirmation
-async function deleteApplicant() {
-  if (specialtyToDeleteIndex === null) return;
+    // Function to delete the applicant with confirmation
+    async function deleteApplicant() {
+    if (specialtyToDeleteIndex === null) return;
 
-  try {
-    deleteDepartmentSpecialty(specialtyToDeleteIndex);
-    showNotificationMessage('success', 'Specialty deleted successfully!');
-  } catch (error) {
-    showNotificationMessage('error', 'Error deleting specialty. Please try again later.');
-  } finally {
+    try {
+        deleteDepartmentSpecialty(specialtyToDeleteIndex);
+        showNotificationMessage('success', 'Specialty deleted successfully!');
+    } catch (error) {
+        showNotificationMessage('error', 'Error deleting specialty. Please try again later.');
+    } finally {
+        showConfirmation = false;
+        specialtyToDeleteIndex = null;
+    }
+    }
+
+    function cancelDeleteRes() {
     showConfirmation = false;
     specialtyToDeleteIndex = null;
-  }
-}
+    }
 
-function cancelDeleteRes() {
-  showConfirmation = false;
-  specialtyToDeleteIndex = null;
-}
+    function confirmDeleteApplicantPost(index) {
+    specialtyToDeleteIndex2 = index;
+    showConfirmation2 = true;
+    }
 
-function confirmDeleteApplicantPost(index) {
-  specialtyToDeleteIndex2 = index;
-  showConfirmation2 = true;
-}
-
-// Function to delete the specialty
-function deletePostDepartmentSpecialty(index) {
-  applicant.postDepartmentSpecialties = applicant.postDepartmentSpecialties.filter((_, i) => i !== index);
-  // Optionally handle success or error messages here if needed
-}
+    // Function to delete the specialty
+    function deletePostDepartmentSpecialty(index) {
+    applicant.postDepartmentSpecialties = applicant.postDepartmentSpecialties.filter((_, i) => i !== index);
+    // Optionally handle success or error messages here if needed
+    }
 
 
-async function deleteApplicantPost() {
-  if (specialtyToDeleteIndex2 === null) return;
+    async function deleteApplicantPost() {
+    if (specialtyToDeleteIndex2 === null) return;
 
-  try {
-    deletePostDepartmentSpecialty(specialtyToDeleteIndex2);
-    showNotificationMessage('success', 'Specialty deleted successfully!');
-  } catch (error) {
-    showNotificationMessage('error', 'Error deleting specialty. Please try again later.');
-  } finally {
+    try {
+        deletePostDepartmentSpecialty(specialtyToDeleteIndex2);
+        showNotificationMessage('success', 'Specialty deleted successfully!');
+    } catch (error) {
+        showNotificationMessage('error', 'Error deleting specialty. Please try again later.');
+    } finally {
+        showConfirmation2 = false;
+        specialtyToDeleteIndex2 = null;
+    }
+    }
+
+    function cancelDeletePost() {
     showConfirmation2 = false;
     specialtyToDeleteIndex2 = null;
-  }
-}
+    }
 
-function cancelDeletePost() {
-  showConfirmation2 = false;
-  specialtyToDeleteIndex2 = null;
-}
+    let showConfirmation3 = false;
 
-let showConfirmation3 = false;
+    function confirmRegistration() {
+    showConfirmation3 = true;
+    }
 
-function confirmRegistration() {
-  showConfirmation3 = true;
-}
-
-
-
-
-function cancelSubmit() {
-  showConfirmation3 = false;
-}
-   
-
+    function cancelSubmit() {
+    showConfirmation3 = false;
+    }
 </script>
 
 <div class="form-container">
     <Topbar />
 
-    <!-- the input of this should be put on the variable appID on the script-->
-    <label for="">Applicant ID:</label>
-    <input type="text" bind:value="{appID}" placeholder="Enter Applicant ID" />
+    <!-- the input of this should be put on the variable applicant.user_id on the script-->
+    <label for="">USER ID:</label>
+    <input type="text" bind:value="{applicant.user_id}" placeholder="Enter User ID" />
 
     <button type="button" class="find-button" on:click="{findApplicant}">Find</button>
 

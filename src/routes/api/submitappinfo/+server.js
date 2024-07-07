@@ -1,5 +1,6 @@
+import { verifyToken } from "$lib/auth";
 import pool from "$lib/db";
-
+import { parse } from "cookie";
 
 export async function POST({ request }) {
     const {
@@ -28,27 +29,21 @@ export async function POST({ request }) {
         medSchoolGradYear,
         internshipInstitution,
         internshipGradYear,
-        departmentSpecialty,
-        hospital,
-        residencyDuration,
-        postResSpecialty,
-        postResInstitution,
-        postResDuration,
         departmentSpecialties = [],
         postDepartmentSpecialties = [],
-        appID
+        user_id
     } = await request.json();
 
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
 
-        let applicantID;
-
         const [existingApplicant] = await connection.execute(
-            `SELECT applicantID FROM applicant WHERE applicantID = ?`,
-            [appID]
+            `SELECT applicantID FROM applicant WHERE userID = ?`,
+            [user_id]
         );
+
+        let applicantID;
 
         if (existingApplicant.length > 0) {
             applicantID = existingApplicant[0].applicantID;
@@ -72,17 +67,16 @@ export async function POST({ request }) {
                     internshipInstitution, internshipGradYear
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
-                    userId, fullName, age, gender, civilStatus, birthDate, birthPlace, citizenship, homeAddress, telephoneNo,
+                    user_id, fullName, age, gender, civilStatus, birthDate, birthPlace, citizenship, homeAddress, telephoneNo,
                     cellphoneNo, emailAddress, tinNo, insuranceIDType, insuranceIDNo, phicNo, guardianName,
                     guardianOccupation, guardianContactNo, collegeAttended, degree, yearGraduated, medSchoolAttended,
                     medSchoolGradYear, internshipInstitution, internshipGradYear
                 ]
             );
 
-            // Get the applicantID of the newly inserted applicant
             const [newApplicant] = await connection.execute(
-                `SELECT applicantID FROM applicant WHERE emailAddress = ?`,
-                [emailAddress]
+                `SELECT applicantID FROM applicant WHERE userID = ?`,
+                [user_id]
             );
             applicantID = newApplicant[0].applicantID;
         }
