@@ -5,8 +5,7 @@
     import Applicants from '../../components/Applicants.svelte';
     import Residency from '../../components/Residency.svelte';
     import PostResidency from '../../components/PostResidency.svelte';
-    import EditApplicant from '../../components/EditApplicant.svelte';
-    import NewApplicant from '../../components/NewApplicant.svelte';
+    import EditAppForm from '../../components/EditAppForm.svelte';
 </script>
   
 <div class="mainbox">
@@ -16,10 +15,8 @@
             <!-- <Dashboard /> -->
         {:else if $pagename === "Users"}
             <Users />
-        {:else if $pagename === "New Applicant"}
-            <NewApplicant />
-        {:else if $pagename === "Edit Applicant"}
-            <EditApplicant />
+        {:else if $pagename === "Application Form"}
+            <EditAppForm />
         {:else if $pagename === "Applicants"}
             <Applicants />
         {:else if $pagename === "Residency"}

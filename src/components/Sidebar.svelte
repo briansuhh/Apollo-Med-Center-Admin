@@ -7,14 +7,9 @@
     console.log('Dashboard');
   }
 
-  function showNewApplicantRecord() {
-    pagename.set('New Applicant');
-    console.log('New Applicant');
-  }
-
-  function showEditApplicantRecord() {
-    pagename.set('Edit Applicant');
-    console.log('Edit Applicant');
+  function showApplicantRecord() {
+    pagename.set('Application Form');
+    console.log('Application Form');
   }
 
   function showUsers() {
@@ -76,12 +71,8 @@
           <i class="fa-solid fa-house icon"></i>Dashboard
       </button>
 
-      <button class="nav-button {$pagename === 'New Applicant' ? 'active' : ''}" on:click={showNewApplicantRecord}>
-          <i class="fa-solid fa-file icon"></i>New Applicant
-      </button>
-
-      <button class="nav-button {$pagename === 'Edit Applicant' ? 'active' : ''}" on:click={showEditApplicantRecord}>
-        <i class="fa-solid fa-file icon"></i>Edit Applicant
+      <button class="nav-button {$pagename === 'Application Form' ? 'active' : ''}" on:click={showApplicantRecord}>
+        <i class="fa-solid fa-file icon"></i>Application Form
     </button>
 
       <span class="separator">Table</span>
