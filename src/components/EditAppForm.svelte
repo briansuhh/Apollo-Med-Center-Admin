@@ -99,12 +99,6 @@
       }
     }
 
-    onMount(async () => {
-        await fetchData(); // Initial data fetch on component mount
-        await fetchResidencyData();
-        await fetchPostResidencyData();
-    });
-
     async function fetchData() {
         try {
             const response = await fetch(`/api/readapplicants/${applicant.user_id}`, {
