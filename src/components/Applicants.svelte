@@ -78,6 +78,7 @@
                 <thead>
                     <tr>
                         <th>Actions</th>
+                        <th>Status</th>
                         <th>User ID</th>
                         <th>Applicant ID</th>
                         <th>Full Name</th>
@@ -113,6 +114,7 @@
                             <td>
                                 <button class="delButton" on:click={() => confirmDeleteApplicant(applicant.applicantID)}><i class="fa-solid fa-trash"></i></button>
                             </td>
+                            <td>{applicant.status}</td>
                             <td>{applicant.userID}</td>
                             <td>{applicant.applicantID}</td>
                             <td>{applicant.fullName}</td>

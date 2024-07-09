@@ -527,6 +527,35 @@
     function cancelSubmit() {
     showConfirmation3 = false;
     }
+
+    async function approveApplicant() {
+        const response = await fetch(`/api/approveapplicant/${applicant.user_id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            showNotificationMessage('success', 'Applicant approved successfully!');
+        } else {
+            showNotificationMessage('error', 'Error approving applicant. Please try again later.');
+        }
+    }
+    
+    async function denyApplicant() {
+        const response = await fetch(`/api/denyapplicant/${applicant.user_id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            showNotificationMessage('success', 'Applicant denied successfully!');
+        } else {
+            showNotificationMessage('error', 'Error denying applicant. Please try again later.');
+        }
+    }
 </script>
 
 <div class="form-container">
@@ -720,6 +749,10 @@
             </form>
         </div>
       {/if}
+    </div>
+    <div class="buttons-center">
+        <button type="button" class="approve-button" on:click="{approveApplicant}">Approve</button>
+        <button type="button" class="deny-button" on:click="{denyApplicant}">Deny</button>
     </div>
   </div>
   
@@ -952,6 +985,33 @@
         width: 100px;
     }
 
+    .approve-button {
+        background-color: teal;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 100px;
+    }
+    .deny-button {
+        background-color: rgb(255, 68, 0);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 100px;
+    }
+
     .user-input {
         padding: 10px;
         margin-left: 10px;
@@ -975,4 +1035,13 @@
         align-items: center;
         margin-top: 20px;
     }
+
+
+    .buttons-center {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 45px;
+    }
+
+    
 </style>
