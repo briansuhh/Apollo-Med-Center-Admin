@@ -308,7 +308,7 @@
                     </table>
                 </div>
                 <div class="problem-description">
-                    <p>Display the application ID, name, age, email address, and degree of candidates with a Biology degree who are 40 years or older. Sort by applicant ID in ascending order.</p>
+                    <p>Display the application ID, name, age, email address, and degree of applicants with a Biology degree who are 40 years or older. Sort by applicant ID in ascending order.</p>
                 </div>
         </div>
             {/if}
