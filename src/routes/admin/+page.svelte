@@ -6,13 +6,15 @@
     import Residency from '../../components/Residency.svelte';
     import PostResidency from '../../components/PostResidency.svelte';
     import EditAppForm from '../../components/EditAppForm.svelte';
+    import Dashboard from '../../components/Dashboard.svelte';
+    
 </script>
   
 <div class="mainbox">
     <div class="box">
         <Sidebar />
         {#if $pagename == "Dashboard"}
-            <!-- <Dashboard /> -->
+            <Dashboard />
         {:else if $pagename === "Users"}
             <Users />
         {:else if $pagename === "Application Form"}
