@@ -295,46 +295,88 @@
                 }
             });
 
-            if (!response.ok) {
-                showNotificationMessage('error', 'Error. Failed to retrieve user information.');
-                throw new Error('Failed to retrieve user information');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.user) {
+                    applicant.fullName = data.user.fullName;
+                    splitFullName();
+                    applicant.age = data.user.age;
+                    applicant.gender = data.user.gender;
+                    applicant.civilStatus = data.user.civilStatus;
+                    applicant.birthDate = formatDate(data.user.birthDate);
+                    applicant.birthPlace = data.user.birthPlace;
+                    applicant.citizenship = data.user.citizenship;
+                    applicant.homeAddress = data.user.homeAddress;
+                    applicant.telephoneNo = data.user.telephoneNo;
+                    applicant.cellphoneNo = data.user.cellphoneNo;
+                    applicant.emailAddress = data.user.emailAddress;
+                    applicant.tinNo = data.user.tinNo;
+                    applicant.insuranceIDType = data.user.insuranceIDType;
+                    applicant.insuranceIDNo = data.user.insuranceIDNo;
+                    applicant.phicNo = data.user.phicNo;
+                    applicant.guardianName = data.user.guardianName;
+                    applicant.guardianOccupation = data.user.guardianOccupation;
+                    applicant.guardianContactNo = data.user.guardianContactNo;
+                    applicant.collegeAttended = data.user.collegeAttended;
+                    applicant.degree = data.user.degree;
+                    applicant.yearGraduated = data.user.yearGraduated;
+                    applicant.medSchoolAttended = data.user.medSchoolAttended;
+                    applicant.medSchoolGradYear = data.user.medSchoolGradYear;
+                    applicant.internshipInstitution = data.user.internshipInstitution;
+                    applicant.internshipGradYear = data.user.internshipGradYear;
+                    showNotificationMessage('success', 'Saved data loaded successfully');
+                } else {
+                    resetApplicant();
+                }
+            } else {
+                resetApplicant();
             }
-
-            const data = await response.json();
-            console.log(data);
-
-            // Update applicant data
-            applicant.fullName = data.user.fullName;
-            splitFullName();
-            applicant.age = data.user.age;
-            applicant.gender = data.user.gender;
-            applicant.civilStatus = data.user.civilStatus;
-            applicant.birthDate = formatDate(data.user.birthDate);
-            applicant.birthPlace = data.user.birthPlace;
-            applicant.citizenship = data.user.citizenship;
-            applicant.homeAddress = data.user.homeAddress;
-            applicant.telephoneNo = data.user.telephoneNo;
-            applicant.cellphoneNo = data.user.cellphoneNo;
-            applicant.emailAddress = data.user.emailAddress;
-            applicant.tinNo = data.user.tinNo;
-            applicant.insuranceIDType = data.user.insuranceIDType;
-            applicant.insuranceIDNo = data.user.insuranceIDNo;
-            applicant.phicNo = data.user.phicNo;
-            applicant.guardianName = data.user.guardianName;
-            applicant.guardianOccupation = data.user.guardianOccupation;
-            applicant.guardianContactNo = data.user.guardianContactNo;
-            applicant.collegeAttended = data.user.collegeAttended;
-            applicant.degree = data.user.degree;
-            applicant.yearGraduated = data.user.yearGraduated;
-            applicant.medSchoolAttended = data.user.medSchoolAttended;
-            applicant.medSchoolGradYear = data.user.medSchoolGradYear;
-            applicant.internshipInstitution = data.user.internshipInstitution;
-            applicant.internshipGradYear = data.user.internshipGradYear;
-
-            showNotificationMessage('success', 'Saved data loaded successfully');
         } catch (error) {
-            showNotificationMessage('error', 'You do not have any saved data. Please fill up the form.');
+            resetApplicant();
+            showNotificationMessage('error', 'User does not have any data');
         }
+    }
+
+    function resetApplicant() {
+        applicant = {
+            fullName: '',
+            firstName: '',
+            middleName: '',
+            lastName: '',
+            age: '',
+            gender: '',
+            civilStatus: '',
+            birthDate: '',
+            birthPlace: '',
+            citizenship: '',
+            homeAddress: '',
+            telephoneNo: '',
+            cellphoneNo: '',
+            emailAddress: '',
+            tinNo: '',
+            insuranceIDType: '',
+            insuranceIDNo: '',
+            phicNo: '',
+            guardianName: '',
+            guardianOccupation: '',
+            guardianContactNo: '',
+            collegeAttended: '',
+            degree: '',
+            yearGraduated: '',
+            medSchoolAttended: '',
+            medSchoolGradYear: '',
+            internshipInstitution: '',
+            internshipGradYear: '',
+            departmentSpecialty: '',
+            hospital: '',
+            residencyDuration: '',
+            postResSpecialty: '',
+            postResInstitution: '',
+            postResDuration: '',
+            departmentSpecialties: [],
+            postDepartmentSpecialties: [],
+            user_id: ''
+        };
     }
 
     const splitFullName = () => {
@@ -385,11 +427,14 @@
                         hospital: item.hospital,
                         residencyDuration: item.residencyDuration
                     }));
+                } else {
+                    applicant.departmentSpecialties = [];
                 }
             } else {
-                showNotificationMessage('error', 'You do not have any saved data. Please fill up the form.');
+                applicant.departmentSpecialties = [];
             }
         } catch (error) {
+            applicant.departmentSpecialties = [];
             showNotificationMessage('error', 'Error fetching residency data. Please try again later.');
         }
     }
@@ -402,26 +447,34 @@
     };
 
     async function fetchPostResidencyData() {
-        const response = await fetch(`/api/readpostres/${applicant.user_id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
+        try {
+            const response = await fetch(`/api/readpostres/${applicant.user_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
 
-        if (response.ok) {
-            const data = await response.json();
-            if (data.user && Array.isArray(data.user)) {
-                applicant.postDepartmentSpecialties = data.user.map(item => ({
-                    id: nextId++,
-                    postResSpecialty: item.postResSpecialty,
-                    postResInstitution: item.postResInstitution,
-                    postResDuration: item.postResDuration
-                }));
+            if (response.ok) {
+                const data = await response.json();
+
+                if (data.user && Array.isArray(data.user)) {
+                    applicant.postDepartmentSpecialties = data.user.map(item => ({
+                        id: nextId++,
+                        postResSpecialty: item.postResSpecialty,
+                        postResInstitution: item.postResInstitution,
+                        postResDuration: item.postResDuration
+                    }));
+                } else {
+                    applicant.postDepartmentSpecialties = [];
+                }
+            } else {
+                applicant.postDepartmentSpecialties = [];
             }
-        } else {
-            showNotificationMessage('error', 'You do not have any saved data. Please fill up the form.');
+        } catch (error) {
+            applicant.postDepartmentSpecialties = [];
+            showNotificationMessage('error', 'Error fetching post-residency data. Please try again later.');
         }
     }
 
