@@ -330,6 +330,7 @@
                 }
             } else {
                 resetApplicant();
+                showNotificationMessage('error', 'User does not have any data');
             }
         } catch (error) {
             resetApplicant();
