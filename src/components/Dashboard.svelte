@@ -28,8 +28,8 @@
         }
     }
 
-    let applicantCount, residencyCount, postResCount, approvedCount, deniedCount, underReviewCount, easy1, easy2, easy3, medium1, medium2, medium3, medium4, hard1, hard2, hard3;
-
+    let applicantCount = 0, residencyCount = 0, postResCount = 0, approvedCount = 0, deniedCount = 0, underReviewCount = 0;
+    let easy1 = [], easy2 = [], easy3 = [], medium1 = [], medium2 = [], medium3 = [], medium4 = [], hard1 = [], hard2 = [], hard3 = [];
     onMount(async () => {
         try {
             const [applicantResponse, residencyResponse, postResResponse, approvedResponse, deniedResponse, underReviewResponse, easy1Response, easy2Response, easy3Response, medium1Response, medium2Response, medium3Response, medium4Response, hard1Response, hard2Response, hard3Response] = await Promise.all([
@@ -131,41 +131,45 @@
                 })
             ]);
 
-            const applicantData = await applicantResponse.json();
-            const residencyData = await residencyResponse.json();
-            const postResData = await postResResponse.json();
-            const approvedData = await approvedResponse.json();
-            const deniedData = await deniedResponse.json();
-            const underReviewData = await underReviewResponse.json();
+            if (applicantResponse.ok && residencyResponse.ok && postResResponse.ok && approvedResponse.ok && deniedResponse.ok && underReviewResponse.ok && easy1Response.ok && easy2Response.ok && easy3Response.ok && medium1Response.ok && medium2Response.ok && medium3Response.ok && medium4Response.ok && hard1Response.ok && hard2Response.ok && hard3Response.ok) {
+                const applicantData = await applicantResponse.json();
+                const residencyData = await residencyResponse.json();
+                const postResData = await postResResponse.json();
+                const approvedData = await approvedResponse.json();
+                const deniedData = await deniedResponse.json();
+                const underReviewData = await underReviewResponse.json();
 
-            const easy1Data = await easy1Response.json();
-            const easy2Data = await easy2Response.json();
-            const easy3Data = await easy3Response.json();
-            const medium1Data = await medium1Response.json();
-            const medium2Data = await medium2Response.json();
-            const medium3Data = await medium3Response.json();
-            const medium4Data = await medium4Response.json();
-            const hard1Data = await hard1Response.json();
-            const hard2Data = await hard2Response.json();
-            const hard3Data = await hard3Response.json();
-    
-            applicantCount = applicantData.data.count;
-            residencyCount = residencyData.data.TotalResidencyCount;
-            postResCount = postResData.data.TotalPostResidencyCount;
-            approvedCount = approvedData.data.count;
-            deniedCount = deniedData.data.count;
-            underReviewCount = underReviewData.data.count;
-
-            easy1 = easy1Data.data;
-            easy2 = easy2Data.data;
-            easy3 = easy3Data.data;
-            medium1 = medium1Data.data;
-            medium2 = medium2Data.data;
-            medium3 = medium3Data.data;
-            medium4 = medium4Data.data;
-            hard1 = hard1Data.data;
-            hard2 = hard2Data.data;
-            hard3 = hard3Data.data;
+                const easy1Data = await easy1Response.json();
+                const easy2Data = await easy2Response.json();
+                const easy3Data = await easy3Response.json();
+                const medium1Data = await medium1Response.json();
+                const medium2Data = await medium2Response.json();
+                const medium3Data = await medium3Response.json();
+                const medium4Data = await medium4Response.json();
+                const hard1Data = await hard1Response.json();
+                const hard2Data = await hard2Response.json();
+                const hard3Data = await hard3Response.json();
+                
+                applicantCount = applicantData.data.count;
+                residencyCount = residencyData.data.TotalResidencyCount;
+                postResCount = postResData.data.TotalPostResidencyCount;
+                approvedCount = approvedData.data.count;
+                deniedCount = deniedData.data.count;
+                underReviewCount = underReviewData.data.count;
+                
+                easy1 = easy1Data.data;
+                easy2 = easy2Data.data;
+                easy3 = easy3Data.data;
+                medium1 = medium1Data.data;
+                medium2 = medium2Data.data;
+                medium3 = medium3Data.data;
+                medium4 = medium4Data.data;
+                hard1 = hard1Data.data;
+                hard2 = hard2Data.data;
+                hard3 = hard3Data.data; 
+            } else {
+                console.error('Failed to fetch data');
+            }
         } catch (error) {
             console.error('Failed to fetch data', error);
         }
@@ -435,6 +439,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            
                             {#each hard1 as applicant}
                                 <tr>
                                     <td>{applicant.applicantID}</td>
