@@ -77,15 +77,15 @@
       </button>
 
       <button class="nav-button {$pagename === 'Applicants' ? 'active' : ''}" on:click={showApplicants}>
-          <i class="fa-solid fa-users icon"></i>Applicants
+        <i class="fa-solid fa-person-walking-luggage icon"></i>Applicants
       </button>
 
       <button class="nav-button {$pagename === 'Residency' ? 'active' : ''}" on:click={showResidency}>
-          <i class="fa-solid fa-building icon"></i>Residency
+        <i class="fa-solid fa-user-nurse icon"></i>Residency
       </button>
 
       <button class="nav-button {$pagename === 'Post Residency' ? 'active' : ''}" on:click={showPostResidency}>
-          <i class="fa-solid fa-building icon"></i>Post Residency
+        <i class="fa-solid fa-briefcase icon"></i>Post Residency
       </button>
 
       <span class="separator">ACCOUNT</span>
