@@ -6,8 +6,11 @@
     import { showNotificationMessage } from '../store/notification.js';
 
     let residencies = [];
+    let initialResidencies = [];
     let showConfirmation = false;
     let residencyToDelete = null;
+    let input = '';
+
 
     onMount(async () => {
         try {
@@ -21,6 +24,7 @@
             if (response.ok) {
                 const result = await response.json();
                 residencies = result.data;
+                initialResidencies = result.data;
                 showNotificationMessage('success', 'Residency loaded successfully!');
             } else {
                 const result = await response.json();
@@ -65,11 +69,45 @@
         showConfirmation = false;
         residencyToDelete = null;
     }
+
+    async function findResidencyByMatch() {
+    try {
+          const response = await fetch(`/api/search/residency/${input}`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              credentials: 'include'
+          });
+
+          if (response.ok) {
+              const data = await response.json(); 
+                residencies = data.data;
+          } else {
+              residencies = initialResidencies;
+          }
+      } catch (error) {
+          showNotificationMessage('error', 'Error loading applicant data. Please try again later.');
+          residencies = initialResidencies;
+      }
+  }
+
+  function resetToDefault() {
+    input = '';
+    residencies = initialResidencies;
+  }
 </script>
 
 
 <main class="main-content">
     <Topbar />
+
+    <div class="search-match">
+        <label class="label-match" for="">MATCH:</label>
+        <input type="text" bind:value="{input}" class="match-input" placeholder="Find record by match">
+        <button type="button" class="find-button" on:click="{findResidencyByMatch}">Find</button>
+        <button type="button" class="find-button" on:click="{resetToDefault}">Reset</button>
+    </div>
 
     <div class="residencies-section">
         <h1>Residency</h1>
@@ -164,5 +202,41 @@
 
     .delButton i {
         font-size: 15px;
+    }
+    .find-button {
+        background-color: #6e7ba2;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 100px;
+    }
+    .match-input {
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 170px;
+    }
+
+    .label-match {
+        margin-left: 45px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+    }
+
+    .search-match {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
     }
 </style>

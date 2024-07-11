@@ -6,8 +6,10 @@
     import { showNotificationMessage } from '../store/notification.js';
 
     let users = [];
+    let initialUsers = [];
     let showConfirmation = false;
     let userToDelete = null;
+    let input = '';
 
     onMount(async () => {
         try {
@@ -21,6 +23,7 @@
             if (response.ok) {
                 const result = await response.json();
                 users = result.data;
+                initialUsers = result.data;
                 showNotificationMessage('success', 'Users loaded successfully!');
             } else {
                 const result = await response.json();
@@ -65,10 +68,44 @@
         showConfirmation = false;
         userToDelete = null;
     }
+
+    async function findUserByMatch() {
+    try {
+          const response = await fetch(`/api/search/user/${input}`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              credentials: 'include'
+          });
+
+          if (response.ok) {
+              const data = await response.json(); 
+              users = data.data;
+          } else {
+              users = initialUsers;
+          }
+      } catch (error) {
+          showNotificationMessage('error', 'Error loading applicant data. Please try again later.');
+          users = initialUsers;
+      }
+  }
+
+  function resetToDefault() {
+    input = '';
+    users = initialUsers;
+  }
 </script>
 
 <main class="main-content">
     <Topbar />
+
+    <div class="search-match">
+        <label class="label-match" for="">MATCH:</label>
+        <input type="text" bind:value="{input}" class="match-input" placeholder="Find record by match">
+        <button type="button" class="find-button" on:click="{findUserByMatch}">Find</button>
+        <button type="button" class="find-button" on:click="{resetToDefault}">Reset</button>
+    </div>
 
     <div class="users-section">
         <h1>Users</h1>
@@ -164,5 +201,42 @@
 
     .delButton i {
         font-size: 15px;
+    }
+
+    .find-button {
+        background-color: #6e7ba2;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 100px;
+    }
+    .match-input {
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 170px;
+    }
+
+    .label-match {
+        margin-left: 45px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+    }
+
+    .search-match {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
     }
 </style>

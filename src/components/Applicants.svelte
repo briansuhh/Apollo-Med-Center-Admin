@@ -1,75 +1,112 @@
 <script>
-    import Topbar from './Topbar.svelte';
-    import { onMount } from 'svelte';
-    import Notification from './Notification.svelte';
-    import { showNotificationMessage } from '../store/notification.js';
-    import ConfirmationMessage from '../components/ConfirmationMessage.svelte';
+  import Topbar from './Topbar.svelte';
+  import { onMount } from 'svelte';
+  import Notification from './Notification.svelte';
+  import { showNotificationMessage } from '../store/notification.js';
+  import ConfirmationMessage from '../components/ConfirmationMessage.svelte';
 
-    let applicants = [];
-    let showConfirmation = false;
-    let applicantToDelete = null;
+  let applicants = [];
+  let initialApplicants = [];
+  let showConfirmation = false;
+  let applicantToDelete = null;
+  let input = '';
 
-    onMount(async () => {
-      try {
-        const response = await fetch('/api/readapplicants', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+  onMount(async () => {
+    try {
+      const response = await fetch('/api/readapplicants', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-        if (response.ok) {
-            const result = await response.json();
-            applicants = result.data;
-            showNotificationMessage('success', 'Applicants loaded successfully!');
-        } else {
-            const result = await response.json();
-            showNotificationMessage('error', 'Error loading applicants. Please try again later.');
-        }
-      } catch (error) {
-        showNotificationMessage('error', 'Error loading applicants. Please try again later.');
+      if (response.ok) {
+          const result = await response.json();
+          applicants = result.data;
+          initialApplicants = result.data; // Save the initial data
+          showNotificationMessage('success', 'Applicants loaded successfully!');
+      } else {
+          const result = await response.json();
+          showNotificationMessage('error', 'Error loading applicants. Please try again later.');
       }
-    });
-
-    function confirmDeleteApplicant(id) {
-      applicantToDelete = id;
-      showConfirmation = true;
+    } catch (error) {
+      showNotificationMessage('error', 'Error loading applicants. Please try again later.');
     }
+  });
 
-    async function deleteApplicant() {
-      if (!applicantToDelete) return;
+  function confirmDeleteApplicant(id) {
+    applicantToDelete = id;
+    showConfirmation = true;
+  }
 
-      try {
-        const response = await fetch(`/api/deleteapplicant/${applicantToDelete}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+  async function deleteApplicant() {
+    if (!applicantToDelete) return;
 
-        if (response.ok) {
-          // Remove the deleted applicant from the list
-          applicants = applicants.filter(applicant => applicant.applicantID !== applicantToDelete);
-          showNotificationMessage('success', 'Applicant deleted successfully!');
-        } else {
-          showNotificationMessage('error', 'Error deleting applicant. Please try again later.');
-        }
-      } catch (error) {
+    try {
+      const response = await fetch(`/api/deleteapplicant/${applicantToDelete}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Remove the deleted applicant from the list
+        applicants = applicants.filter(applicant => applicant.applicantID !== applicantToDelete);
+        showNotificationMessage('success', 'Applicant deleted successfully!');
+      } else {
         showNotificationMessage('error', 'Error deleting applicant. Please try again later.');
-      } finally {
-        showConfirmation = false;
-        applicantToDelete = null;
       }
-    }
-
-    function cancelDelete() {
+    } catch (error) {
+      showNotificationMessage('error', 'Error deleting applicant. Please try again later.');
+    } finally {
       showConfirmation = false;
       applicantToDelete = null;
     }
+  }
+
+  function cancelDelete() {
+    showConfirmation = false;
+    applicantToDelete = null;
+  }
+
+  async function findApplicantByMatch() {
+    try {
+          const response = await fetch(`/api/search/applicant/${input}`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              credentials: 'include'
+          });
+
+          if (response.ok) {
+              const data = await response.json(); 
+              applicants = data.data;
+          } else {
+              applicants = initialApplicants;
+          }
+      } catch (error) {
+          showNotificationMessage('error', 'Error loading applicant data. Please try again later.');
+          applicants = initialApplicants;
+      }
+  }
+
+  function resetToDefault() {
+    input = '';
+    applicants = initialApplicants;
+  }
 </script>
 
 <main class="main-content">
     <Topbar />
+
+      <div class="search-match">
+        <label class="label-match" for="">MATCH:</label>
+        <input type="text" bind:value="{input}" class="match-input" placeholder="Find record by match">
+        <button type="button" class="find-button" on:click="{findApplicantByMatch}">Find</button>
+        <button type="button" class="find-button" on:click="{resetToDefault}">Reset</button>
+    </div>
 
     <div class="applicants-section">
         <h1>Applicants</h1>
@@ -210,5 +247,41 @@
 
     .delButton i {
         font-size: 15px;
+    }
+    .find-button {
+        background-color: #6e7ba2;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 100px;
+    }
+    .match-input {
+        padding: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        width: 170px;
+    }
+
+    .label-match {
+        margin-left: 45px;
+        margin-right: 10px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+    }
+
+    .search-match {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
     }
 </style>
